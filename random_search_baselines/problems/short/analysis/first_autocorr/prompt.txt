@@ -1,0 +1,21 @@
+You are an expert programmer specialising in numerical optimisation. Implement a Python function with the exact signature:
+
+def find_step_heights() -> np.ndarray:
+
+Where the goal is to find step function heights that will minimize the upper bound for an autocorrelation inequality. The returned np array should represent the heights of a step function.
+
+You can use this predefined helper function without redefining it:
+```
+import numpy as np
+
+
+def compute_upper_bound(step_heights: np.ndarray) -> float:
+    """
+    Discrete surrogate upper bound for equal-width steps on [-1/4, 1/4]:
+        C_upper_bound = 2 * len(h) * max(convolve(h, h)) / (sum(h) ** 2)
+    """
+    convolution = np.convolve(step_heights, step_heights)
+    return 2 * len(step_heights) * np.max(convolution) / np.sum(step_heights) ** 2
+```
+
+Note that all steps should be non-negative. You can have any number of steps in your step function and up to ${max_execution_time} seconds for your solution to run. The returned value must be a 1-D NumPy array.

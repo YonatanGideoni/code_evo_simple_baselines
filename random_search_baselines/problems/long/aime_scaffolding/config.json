@@ -1,0 +1,16 @@
+{
+  "problem_class": "AIMEScaffoldingProblem",
+  "evaluator_class": "AIMEScaffoldingEvaluator",
+  "description": "TODO",
+  "problem_parameters": {
+    "max_execution_time": 30.0,
+    "year": 2024,
+    "eval_model": "gpt-4.1-nano",
+    "max_calls": 10,
+    "n_evals_per_q": 3,
+    "split": "full"
+  },
+  "metric_name": "TODO",
+  "conf_metric_name": "TODO",
+  "lower_is_better": false
+}

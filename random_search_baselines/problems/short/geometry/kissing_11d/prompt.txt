@@ -1,0 +1,64 @@
+You are an expert programmer specialising in numerical optimisation. Implement a Python function with the exact signature:
+
+def kissing_points() -> np.ndarray
+
+Return a set $C \subset \mathbb{R}^{${dim}}$ as a NumPy array of shape (n, ${dim}) with $n \ge 2$ such that:
+1) $0 \notin C$  (no zero vector), and
+2) $\min_{x \ne y \in C} \|x - y\|_2 \ge \max_{x \in C} \|x\|_2$.
+
+Unit spheres centred at $\{ 2x/\|x\|_2 : x \in C \}$ form a valid kissing configuration in ${dim} dimensions, so the objective is to maximise the number of points $|C|$(=n here).
+
+You may return either integer or floating-point coordinates.
+
+Return:
+- points: np.ndarray of shape (n, ${dim}) with real-valued entries only. Do not return anything else.
+
+You can use these predefined helper functions without redefining them:
+```
+import numpy as np
+import scipy as sp
+
+def check_constraints(points: np.ndarray) -> bool:
+    # Reject non-finite
+    if not np.isfinite(points).all():
+        return False
+
+    # reject above known upper bound
+    if len(points) > 868:
+        return False
+
+    # Nonzero vectors (quick guard even for int path)
+    if np.any(np.linalg.norm(points, axis=1) == 0):
+        return False
+
+    if np.issubdtype(points.dtype, np.integer):
+        # Exact integer path: compare squared distances/norms as Python ints
+        P = points.astype(object)
+        n = P.shape[0]
+        max_n2 = 0
+        for i in range(n):
+            v = P[i]
+            n2 = int(np.dot(v, v))
+            if n2 == 0:
+                return False
+            if n2 > max_n2:
+                max_n2 = n2
+        min_d2 = None
+        for i in range(n - 1):
+            vi = P[i]
+            for j in range(i + 1, n):
+                diff = vi - P[j]
+                d2 = int(np.dot(diff, diff))
+                if min_d2 is None or d2 < min_d2:
+                    min_d2 = d2
+        return min_d2 is not None and min_d2 >= max_n2
+
+    # Floating path
+    d = sp.spatial.distance.pdist(points)
+    norms = np.linalg.norm(points, axis=1)
+    min_d = d.min()
+    max_norm = norms.max()
+    return min_d >= max_norm
+```
+
+You have up to ${max_execution_time} seconds for your solution to run. Please only supply the code for kissing_points, please define helper functions inside it.

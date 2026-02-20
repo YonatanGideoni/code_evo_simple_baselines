@@ -1,0 +1,16 @@
+{
+  "problem_class": "CirclePackingProblem",
+  "evaluator_class": "CirclePackingEvaluator",
+  "description": "Pack 26 non-overlapping circles in the unit square to maximize the sum of their radii.",
+  "problem_parameters": {
+    "n_circles": 26,
+    "unit_square": [
+      0.0,
+      1.0
+    ],
+    "max_execution_time": 60.0
+  },
+  "metric_name": "sum of radii",
+  "conf_metric_name": "sum_radii",
+  "lower_is_better": false
+}

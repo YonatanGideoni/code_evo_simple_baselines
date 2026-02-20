@@ -1,0 +1,151 @@
+You are an expert programmer specialising in numerical optimisation. Implement a Python function with the exact signature:
+
+def find_hermite_coefficients() -> np.ndarray:
+
+Where the goal is to find 3 coefficients of a Hermite polynomial that will minimize some upper bound. The returned np array should have shape (3,).
+
+You can use these predefined helper functions without redefining them:
+```
+import numpy as np
+from scipy.special import hermite
+
+
+def get_hermite_poly_coeffs(n: int) -> np.ndarray:
+    """
+    Get Hermite polynomial coefficients using scipy.
+
+    Args:
+        n: Degree of Hermite polynomial
+
+    Returns:
+        Coefficient array in ascending powers [a0, a1, a2, ...] for a0 + a1*x + a2*x^2 + ...
+    """
+    h = hermite(n, monic=False)
+    return h.coefficients[::-1]  # Reverse to get ascending powers
+
+
+def find_hermite_combination_fast(coeffs: np.ndarray) -> np.ndarray:
+    """
+    Fast numerical computation of Hermite combination polynomial coefficients.
+
+    This replaces the symbolic SymPy computation with pure NumPy operations.
+    The function computes a linear combination of Hermite polynomials with degrees
+    0, 4, 8, 12, ..., 4*m where m = len(coeffs), plus one additional term to
+    ensure the polynomial has a root at x=0.
+
+    Args:
+        coeffs: Array of coefficients for the Hermite combination
+
+    Returns:
+        Polynomial coefficients in ascending powers [a0, a1, a2, ...]
+    """
+    m = len(coeffs)
+    degrees = np.arange(0, 4 * m + 4, 4)  # [0, 4, 8, 12, ..., 4*m]
+
+    # Get Hermite polynomial coefficients for all required degrees
+    max_degree = degrees[-1]
+    poly_coeffs = np.zeros((len(degrees), max_degree + 1))
+
+    for i, deg in enumerate(degrees):
+        h_coeffs = get_hermite_poly_coeffs(deg)
+        poly_coeffs[i, :len(h_coeffs)] = h_coeffs
+
+    # Compute partial sum using first m coefficients
+    partial_poly = np.zeros(max_degree + 1)
+    for i in range(len(coeffs)):
+        partial_poly += coeffs[i] * poly_coeffs[i]
+
+    # Impose condition that polynomial has root at x=0
+    # We need: partial_sum(0) + last_coeff * hermite_n(0) = 0
+    a = poly_coeffs[-1, 0]  # Value of last Hermite polynomial at x=0
+    b = -partial_poly[0]  # Negative of partial sum at x=0
+
+    if abs(a) < 1e-15:  # Avoid division by zero
+        last_coeff = 0
+    else:
+        last_coeff = b / a
+
+    # Compute final polynomial
+    final_poly = partial_poly + last_coeff * poly_coeffs[-1]
+
+    # Ensure positive leading coefficient (limit at infinity > 0)
+    if len(final_poly) > 0 and final_poly[-1] < 0:
+        final_poly = -final_poly
+
+    return final_poly
+
+
+def get_upper_bound_fast(coeffs: np.ndarray) -> float:
+    """
+    Fast computation of upper bound for Hermite combination.
+
+    This is an optimized numerical version of the original get_upper_bound function.
+    It computes the largest positive root where there's a sign change in the polynomial
+    g(x)/x^2, then returns root^2 / (2*pi).
+
+    Args:
+        coeffs: Coefficient array for Hermite combination
+
+    Returns:
+        Upper bound value: (largest_sign_change_root^2) / (2*pi)
+    """
+
+    # all zeroes is a no no
+    if np.all(coeffs == 0):
+        return 10.0
+
+    try:
+        # Get the Hermite combination polynomial
+        final_poly = find_hermite_combination_fast(coeffs)
+
+        # Divide by x^2 by removing the first two coefficients (x^0 and x^1 terms)
+        if len(final_poly) < 3:
+            return 10.0  # Large penalty for degenerate cases
+
+        gq_coeffs = final_poly[2:]  # Remove x^0 and x^1 terms
+
+        if len(gq_coeffs) == 0:
+            return 10.0
+
+        # Find roots using numpy (expects coefficients in descending order)
+        roots = np.roots(gq_coeffs[::-1])
+
+        # Filter for positive real roots
+        real_roots = []
+        for root in roots:
+            if np.isreal(root):
+                real_root = np.real(root)
+                if real_root > 1e-10:  # Only positive roots with some tolerance
+                    real_roots.append(real_root)
+
+        if not real_roots:
+            return 10.0
+
+        # Check for sign changes at each root
+        largest_sign_change = 0
+        eps = 1e-10  # Small epsilon for checking sign changes
+
+        for root in real_roots:
+            # Evaluate polynomial at root ± epsilon
+            val_left = np.polyval(gq_coeffs[::-1], root - eps)
+            val_right = np.polyval(gq_coeffs[::-1], root + eps)
+
+            # Check if there's a sign change (indicating a genuine root crossing)
+            if val_left * val_right < 0:
+                largest_sign_change = max(largest_sign_change, root)
+
+        if largest_sign_change == 0:
+            return 10.0
+
+        # Return the final result
+        bound = (largest_sign_change ** 2) / (2 * np.pi)
+
+        # Clamp extremely large values
+        return min(bound, 10.0)
+
+    except Exception as e:
+        # Return large penalty for any computational errors
+        return 10.0
+```
+
+You have up to ${max_execution_time} seconds for your solution to run. Please only supply the code for find_hermite_coefficients, define helper functions inside it.

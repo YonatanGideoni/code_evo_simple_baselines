@@ -1,0 +1,13 @@
+{
+  "problem_class": "MaxMinDistanceRatioProblem",
+  "evaluator_class": "MaxMinDistanceRatioEvaluator",
+  "description": "Place n points in R^d to minimise the square of the ratio between maximum and minimum pairwise distances.",
+  "problem_parameters": {
+    "n_points": 16,
+    "dim": 2,
+    "max_execution_time": 60.0
+  },
+  "metric_name": "max over min distance ratio squared value",
+  "conf_metric_name": "ratio_squared",
+  "lower_is_better": true
+}

@@ -1,0 +1,36 @@
+You are an expert programmer specialising in additive combinatorics. Implement a Python function with the exact signature:
+
+
+def propose_integer_set() -> np.ndarray:
+
+Where the goal is to find a set of integers that will maximize a lower bound related to sum and difference sets. Specifically, if the lower bound is $C$ and the set is $U$ then the bound is defined by $C \geq 1 + \frac{\log \frac{|U-U|}{|U+U|}}{\log (2 \max (U) + 1)}$. The returned np array should represent the integer set, yielding a constant $K<C$. We wish to maximize $K$.
+
+You can use this predefined helper function without redefining it:
+```
+def compute_lower_bound(u: list[int]) -> float:
+  """Returns the lower bound obtained from the input set u, which must satisfy min(u) == 0."""
+  if min(u) != 0:
+    raise AssertionError("Set U must be nonnegative and must contain 0; got minimum value ", min(u))
+
+  max_u = max(u)
+  u_minus_u = np.zeros(2 * max_u + 1, dtype=bool)  # Store the set u - u as an array of booleans.
+  u_plus_u = np.zeros(2 * max_u + 1, dtype=bool)  # Store the set u + u as an array of booleans.
+  u_np = np.array(u)
+
+  for i in u:
+    u_minus_u[i - u_np + max_u] = True
+    u_plus_u[i + u_np] = True
+
+  u_minus_u_size = np.sum(u_minus_u)
+  u_plus_u_size = np.sum(u_plus_u)
+
+  if u_minus_u_size > 2 * max_u + 1:
+    raise AssertionError(
+        "The constraint |U - U| <= 2 max (U) + 1 is not satisfied. Got: "
+        f"lhs={u_minus_u_size} but rhs={2 * max_u + 1}."
+    )
+
+  return np.log(u_minus_u_size / u_plus_u_size) / np.log(2 * max_u + 1) + 1.0
+```
+
+You have up to ${max_execution_time} seconds for your solution to run. Please only supply the code for `propose_integer_set`, define helper functions inside it.

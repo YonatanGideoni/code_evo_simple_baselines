@@ -1,0 +1,12 @@
+{
+  "problem_class": "HeilbronnTrianglesProblem",
+  "evaluator_class": "HeilbronnTrianglesEvaluator",
+  "description": "Place n points inside a fixed equilateral triangle (normalised to unit area) to maximise the smallest triangle area.",
+  "problem_parameters": {
+    "n_points": 11,
+    "max_execution_time": 60.0
+  },
+  "metric_name": "smallest triangle relative area",
+  "conf_metric_name": "min_area",
+  "lower_is_better": false
+}

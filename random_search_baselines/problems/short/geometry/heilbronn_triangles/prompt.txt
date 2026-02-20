@@ -1,0 +1,36 @@
+You are an expert programmer specialising in numerical optimisation. Implement a Python function with the exact signature:
+
+def heilbronn_points() -> np.ndarray
+
+The function must place ${n_points} points on or inside the equilateral triangle with vertices (0,0), (1,0), (0.5, sqrt(3)/2) so as to maximise the area of the smallest triangle formed by any three of the points. We evaluate the minimum triangle area normalised by the area of the outer triangle (sqrt(3)/4).
+
+Return:
+- points: np.ndarray of shape (${n_points}, 2) with real-valued coordinates on or inside the triangle.
+
+You can use these predefined helper functions without redefining them:
+```
+import numpy as np
+import itertools
+
+def triangle_area(a: np.ndarray, b: np.ndarray, c: np.ndarray) -> float:
+    return abs(a[0]*(b[1]-c[1]) + b[0]*(c[1]-a[1]) + c[0]*(a[1]-b[1])) / 2.0
+
+def compute_min_area(points: np.ndarray) -> float:
+    base_area = np.sqrt(3.0) / 4.0
+    min_area = float("inf")
+    for i, j, k in itertools.combinations(range(points.shape[0]), 3):
+        a, b, c = points[i], points[j], points[k]
+        area = triangle_area(a, b, c)
+        if area < min_area:
+            min_area = area
+    return min_area / base_area
+
+def check_inside_triangle(points: np.ndarray) -> bool:
+    rt3 = np.sqrt(3.0)
+    for x, y in points:
+        if not (y >= 0 and y <= rt3 * x and rt3 * x <= rt3 - y):
+            return False
+    return True
+```
+
+You have up to ${max_execution_time} seconds for your solution to run. Please only supply the code for heilbronn_points, please define helper functions inside it.

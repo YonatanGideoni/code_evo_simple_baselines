@@ -1,0 +1,70 @@
+You are an expert machine learning engineer tasked with designing a new agentic system capable of solving complicated math problems coming from the AIME competition.
+
+You will be given a program that implements an agent scaffold called `Agent`. Per problem processed in the `forward` function, the agent has a maximum number of 10 LLM queries. Your goal is to improve the agentic system by suggesting new scaffolds.
+
+Some potential directions to explore include:
+1. Chain-of-thought prompting
+2. Multi-step reasoning and reflection
+3. Temperature sampling and ensembling of answers (e.g. 0.0, 0.5, 1.0)
+4. Few-shot example construction
+5. Different expert prompts (e.g. "You are a skilled mathematician.")
+6. Tree search methods (e.g. beam search, tree of thoughts)
+7. Self-verification (e.g. different verifiers scoring solutions)
+
+It is well known that reasoning models perform especially well on math problems like AIME. Explore different approaches to elicit deep thinking in simple LLM models.
+
+Your goal is to maximize the average accuracy of the agent scaffold on the full AIME problem set.
+
+The initial Agent class is:
+```
+from typing import Callable
+
+
+class Agent:
+    def __init__(
+        self,
+        query_llm: Callable,
+        temperature=0.0,
+    ):
+        self.output_format_instructions = "On the final line output only the digits of the answer (0‑999). Provide your final answer enclosed in a LaTeX \\boxed{{...}} command."
+        self.query_llm = query_llm
+        self.temperature = temperature
+
+    def forward(self, problem: str) -> tuple[str, float]:
+        """Queries the LLM with a math problem."""
+        system_prompt, task_prompt = self.get_prompt_for_task(problem)
+        response, cost = self.query_llm(
+            prompt=task_prompt,
+            system=system_prompt,
+            temperature=self.temperature,
+        )
+        return response, cost
+
+    def get_prompt_for_task(self, problem: str) -> tuple[str, str]:
+        system_prompt = "You are a skilled mathematician."
+        task_prompt = f"{self.output_format_instructions}:\n\n{problem}\n\n"
+        return system_prompt, task_prompt
+```
+Write a new `Agent` class that maximizes the accuracy on AIME. This class will be evaluated using this function:
+```
+def run_experiment(**kwargs):
+    from utils import query_llm, create_call_limited_query_llm
+    from functools import partial
+
+    # Create base query_llm function
+    base_query_llm = partial(query_llm, model_name=kwargs["model_name"])
+
+    # Wrap it with call limiting (max 10 calls per forward pass)
+    limited_query_llm = create_call_limited_query_llm(
+        base_query_llm,
+        max_calls=kwargs["max_calls"],
+    )
+
+    accuracy, cost_total, processed, num_llm_calls, df = agent_evaluation(
+        Agent, limited_query_llm, year=kwargs["year"]
+    )
+    return accuracy, cost_total, processed, num_llm_calls, df
+```
+
+Make sure the final returned string is still in the AIME \boxed{...} format. It is crucial that the solution format of AIME is preserved. The solution should be a three-digit number (0-999) with no punctuation.
+Be creative and think outside the box.

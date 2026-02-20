@@ -1,0 +1,12 @@
+{
+  "problem_class": "KissingNumberProblem",
+  "evaluator_class": "KissingNumberEvaluator",
+  "description": "Find C ⊂ R^d (d=11) with 0∉C and min_{x≠y} ||x−y|| ≥ max_x ||x|| to certify a kissing number ≥ |C|. Accepts integer (exact) or float (tolerant) submissions.",
+  "problem_parameters": {
+    "dimension": 11,
+    "max_execution_time": 60.0
+  },
+  "metric_name": "kissing number lower bound",
+  "conf_metric_name": "kissing_count",
+  "lower_is_better": false
+}

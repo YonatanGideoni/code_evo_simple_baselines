@@ -1,0 +1,11 @@
+{
+  "problem_class": "ErdosMinimumOverlapProblem",
+  "evaluator_class": "ErdosMinimumOverlapEvaluator",
+  "description": "TODO",
+  "problem_parameters": {
+    "max_execution_time": 60.0
+  },
+  "metric_name": "minimum overlap",
+  "conf_metric_name": "upper_bound",
+  "lower_is_better": true
+}

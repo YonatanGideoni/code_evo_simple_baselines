@@ -1,0 +1,21 @@
+You are an expert programmer specialising in numerical optimisation. Implement a Python function with the exact signature:
+
+def minimize_ratio() -> np.ndarray
+
+The function must place ${n_points} points in ${dim}-dimensional Euclidean space to minimise the ratio between the maximum and minimum pairwise distances.
+
+Return:
+- points: np.ndarray of shape (${n_points}, ${dim}) with real-valued coordinates only.
+
+You can use these predefined helper functions without redefining them:
+
+```
+import numpy as np
+import scipy as sp
+
+def compute_ratio_squared(points: np.ndarray) -> float:
+    d = sp.spatial.distance.pdist(points)
+    return (d.max() / d.min()) ** 2
+```
+
+You have up to ${max_execution_time} seconds for your solution to run. Please only supply the code for minimize_ratio, please define helper functions inside it.

@@ -1,0 +1,11 @@
+{
+  "problem_class": "SumsAndDifferencesProblem",
+  "evaluator_class": "SumsAndDifferencesEvaluator",
+  "description": "TODO",
+  "problem_parameters": {
+    "max_execution_time": 60.0
+  },
+  "metric_name": "lower bound (K)",
+  "conf_metric_name": "lower_bound",
+  "lower_is_better": false
+}

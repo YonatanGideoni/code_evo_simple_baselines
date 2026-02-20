@@ -1,0 +1,34 @@
+You are an expert programmer specialising in numerical optimisation. Implement a Python function with the exact signature:
+
+def find_step_heights() -> np.ndarray:
+
+Where the goal is to find step function heights that will maximize the lower bound on the smallest constant C for which $$ \|f*f\|_2^2 \leq C \|f*f\|_1 \|f*f\|_\infty$$, $f$ being a nonnegative function supported on $[-1/4, 1/4]$. The returned np array should represent the heights of this step function, yielding a constant $K<C$. We wish to maximize $K$.
+
+You can use this predefined helper function without redefining it:
+```
+def compute_lower_bound(step_heights: np.ndarray) -> float:
+    convolution = np.convolve(step_heights, step_heights)
+
+    # Calculate the 2-norm squared: ||f*f||_2^2
+    num_points = len(convolution)
+    x_points = np.linspace(-0.5, 0.5, num_points + 2)
+    x_intervals = np.diff(x_points)  # Width of each interval
+    y_points = np.concatenate(([0], convolution, [0]))
+    l2_norm_squared = 0.0
+    for i in range(len(convolution) + 1):  # Iterate through intervals
+        y1 = y_points[i]
+        y2 = y_points[i + 1]
+        h = x_intervals[i]
+        # Integral of (mx + c)^2 = h/3 * (y1^2 + y1*y2 + y2^2) where m = (y2-y1)/h, c = y1 - m*x1, interval is [x1, x2], y1 = mx1+c, y2=mx2+c
+        interval_l2_squared = (h / 3) * (y1 ** 2 + y1 * y2 + y2 ** 2)
+        l2_norm_squared += interval_l2_squared
+
+    # Calculate the 1-norm: ||f*f||_1
+    norm_1 = np.sum(np.abs(convolution)) / (len(convolution) + 1)
+
+    # Calculate the infinity-norm: ||f*f||_inf
+    norm_inf = np.max(np.abs(convolution))
+    return l2_norm_squared / (norm_1 * norm_inf)
+```
+
+Note that all steps should be non-negative. You can have any number of steps in your step function and up to ${max_execution_time} seconds for your solution to run. The returned value must be a 1-D NumPy array.

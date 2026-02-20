@@ -1,0 +1,12 @@
+{
+  "sampling_params": {
+    "temperature": 0.8,
+    "top_p": 0.95,
+    "max_tokens": 8192,
+    "thinking_budget": 0
+  },
+  "api_params": {
+    "gemini_model": "gemini-2.5-flash-lite",
+    "max_retries": 3
+  }
+}

@@ -1,0 +1,94 @@
+You are an expert programmer specialising in numerical optimisation. Implement a Python function with the exact signature:
+
+def find_step_heights() -> np.ndarray:
+
+Where the goal is to find step function heights that will minimize the maximum overlap in Erdős' minimum overlap problem. The returned np array should represent the heights of a step function.
+
+You can use these predefined helper functions without redefining them:
+```
+import numpy as np
+
+
+def compute_convolution_overlap(step_heights: np.ndarray) -> float:
+    """
+    Compute the maximum overlap value for a step function.
+
+    Args:
+        step_heights: Array of step function heights
+
+    Returns:
+        Maximum value of the convolution h * (1 - h)
+    """
+    # Compute convolution h * (1 - h)
+    convolution_values = np.correlate(
+        step_heights, 1 - step_heights, mode='full'
+    )
+    # Return maximum value normalized by len(step_heights) / 2
+    return np.max(convolution_values) / len(step_heights) * 2
+
+
+def create_symmetric_sequence(half_seq: np.ndarray) -> np.ndarray:
+    """
+    Create a symmetric sequence from a half-sequence.
+
+    Args:
+        half_seq: Half of the sequence to make symmetric
+
+    Returns:
+        Full symmetric sequence: [a1, a2, ..., ak, ..., a2, a1]
+    """
+    if len(half_seq) == 0:
+        return np.array([])
+
+    # Create symmetric sequence
+    reversed_seq = half_seq[::-1]
+    if len(half_seq) > 1:
+        full_seq = np.concatenate((half_seq[:-1], reversed_seq))
+    else:
+        full_seq = half_seq
+
+    return full_seq
+
+
+def normalize_to_constraint(step_heights: np.ndarray) -> np.ndarray:
+    """
+    Normalize step heights to satisfy the sum constraint.
+
+    Args:
+        step_heights: Array of step heights to normalize
+
+    Returns:
+        Normalized step heights where sum equals n_steps / 2.0
+    """
+    current_sum = np.sum(step_heights)
+    target_sum = len(step_heights) / 2.0
+
+    if current_sum == 0:
+        return np.ones(len(step_heights)) * (target_sum / len(step_heights))
+
+    return step_heights * (target_sum / current_sum)
+
+
+def validate_step_function(step_heights: np.ndarray) -> bool:
+    """
+    Validate that step function satisfies all constraints.
+
+    Args:
+        step_heights: Array of step heights
+
+    Returns:
+        True if valid, False otherwise
+    """
+    # Check bounds [0, 1]
+    if np.any(step_heights < 0) or np.any(step_heights > 1):
+        return False
+
+    # Check sum constraint
+    expected_sum = len(step_heights) / 2.0
+    if not np.isclose(np.sum(step_heights), expected_sum, rtol=1e-9, atol=1e-9):
+        return False
+
+    return True
+```
+
+You can have any number of steps in your step function and up to ${max_execution_time} seconds for your solution to run. The returned value must be a 1-D NumPy array `h` with all entries in ``[0, 1]`` and `h.sum() == len(h) / 2`. Please only supply the code for find_step_heights, define helper functions inside it.

@@ -1,0 +1,42 @@
+You are an expert programmer specialising in numerical optimisation. Implement a Python function with the exact signature:
+
+def pack_circles() -> Tuple[np.ndarray, np.ndarray, float]:
+
+The function must pack 26 non-overlapping circles into the unit square [0,1]x[0,1] so that the sum of their radii is maximised. Returns:
+- centers: np.ndarray of shape (26, 2) with (x, y) coordinates
+- radii:   np.ndarray of shape (26,) with positive radii
+- sum_radii: float = radii.sum()
+
+You can use these predefined helper functions without redefining them:
+```
+import numpy as np
+import itertools
+
+def verify_circles(circles: np.ndarray) -> bool:
+    """Checks that the circles are disjoint and lie inside a unit square.
+
+    Args:
+      circles: A numpy array of shape (num_circles, 3), where each row is
+        of the form (x, y, radius), specifying a circle.
+
+    Returns:
+      True if all circles are disjoint and fully inside the unit square,
+      False otherwise.
+    """
+    # Check pairwise disjointness.
+    for circle1, circle2 in itertools.combinations(circles, 2):
+        center_distance = np.sqrt((circle1[0] - circle2[0])**2 + (circle1[1] - circle2[1])**2)
+        radii_sum = circle1[2] + circle2[2]
+        if center_distance < radii_sum:  # Overlap
+            return False
+
+    # Check all circles lie inside the unit square [0,1]x[0,1].
+    for circle in circles:
+        x, y, r = circle
+        if x - r < 0 or y - r < 0 or x + r > 1 or y + r > 1:
+            return False
+
+    return True
+```
+
+All circles must be fully inside the square and not overlap. You have up to ${max_execution_time} seconds for your solution to run. Please only supply the code for pack_circles, please define helper functions inside it.
