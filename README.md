@@ -1,8 +1,7 @@
 # Code for "Simple Baselines are Competitive with Code Evolution"
 
 [![arXiv](https://img.shields.io/badge/arXiv-2602.16805-b31b1b.svg)](https://arxiv.org/abs/2602.16805)
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)]
-(https://colab.research.google.com/github/YonatanGideoni/code_evo_simple_baselines/blob/main/eval_cascade_demo.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/YonatanGideoni/code_evo_simple_baselines/blob/main/eval_cascade_demo.ipynb)
 [![Blog](https://img.shields.io/badge/Blog-Post-blue)](https://yonatan.gideoni.com/blog/what_matters_for_code_evo/)
 
 This is the code release for the paper "Simple Baselines are Competitive with Code Evolution". The repo contains:
