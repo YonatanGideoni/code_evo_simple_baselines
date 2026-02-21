@@ -54,7 +54,7 @@ This constitutes a single trial of SCS. To generate a new trial, rerun.
 
 For the AIME scaffolding problem remember to set the `OPENAI_API_KEY` environment variable, as its evaluations use `gpt-4.1-nano`.
 
-## Citation
+## Bibtex
 ```
 @article{gideoni2026simple,
   title={Simple Baselines are Competitive with Code Evolution},
